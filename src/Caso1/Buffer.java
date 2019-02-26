@@ -22,10 +22,7 @@ public class Buffer {
 			pC();
 			buffer[top]=ms;					// agrega el mensaje en el tope del buffer.
 			top=(top+1)%buffer.length;		// actualiza el tope a la siguiente posicion.
-	
-			ms.duerme();					// se duerme hasta que sea atendido.
-			
-			vC();							// termina la consulta. Norifica si hay clientes en cola.
+			ms.duerme();					// se duerme hasta que sea atendido.	
 		}
 		
 		
@@ -40,6 +37,7 @@ public class Buffer {
 			if(ms != null) {
 				buffer[primero]=null;
 				primero=(primero+1)%buffer.length;
+				vC();							// termina la consulta. Norifica si hay clientes en cola.
 			}
 			
 			return ms;
@@ -75,10 +73,4 @@ public class Buffer {
 		public int darTotalClientes () {
 			return totalClientes;
 		}
-		
-
-
-
-		
-		
 }
