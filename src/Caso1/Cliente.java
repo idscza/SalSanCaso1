@@ -11,10 +11,16 @@ public class Cliente extends Thread{
 	
 	@Override
 	public void run() {
-		
+		boolean entro;
 		while( porEnviar > 0){
 			buffer.pC();
-			buffer.almacenarMs(new Mensaje("     Cliente: "+this.getName()+"   |    PorEnviar:"+porEnviar--));
+			Mensaje ms = new Mensaje("     Cliente: "+this.getName()+"   |    PorEnviar:"+porEnviar--);
+			entro = buffer.almacenarMs(ms);
+			while(!entro){
+				buffer.vC();
+				buffer.pC();
+				entro=buffer.almacenarMs(ms);
+			}
 		}
 			
 		

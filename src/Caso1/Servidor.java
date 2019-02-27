@@ -2,12 +2,12 @@ package Caso1;
 
 public class Servidor extends Thread {
 	private Buffer buffer;
-	private int sumando;
+	private int id;
 	private Mensaje ms;
 	
-	public Servidor(Buffer b, int pSumando) {
+	public Servidor(Buffer b, int pid) {
 		buffer=b;
-		sumando = pSumando;
+		id = pid;
 	}
 	
 	@Override
@@ -21,7 +21,7 @@ public class Servidor extends Thread {
 				responderMS(ms);	// si hay mensaje, lo responde (y despierta a su cliente).
 		}
 		
-		System.out.println("sale servidor "+sumando);
+		System.out.println("  sale servidor "+id);
 	}
 	
 	/**
@@ -30,7 +30,7 @@ public class Servidor extends Thread {
 	 */
 	public void responderMS(Mensaje ms) {
 
-		ms.actualizar(sumando);
+		ms.actualizar(id);
 		try {
 			sleep((long)0);
 		} catch (InterruptedException e) {

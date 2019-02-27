@@ -7,6 +7,9 @@ public class Buffer {
 	private int cupo; 	// se comportara como semaforo para clientes.
 	private int top = 0;		// clientes siempre agregan al indice top.
 	private int primero = 0;	// servidores siempre atienden al indice primero.
+	
+	private int enEspera = 0;
+	private int enEsperaMS = 0;
 
 	public Buffer (int tamanio, int numClientes) {
 		buffer = new Mensaje[tamanio];		
@@ -17,15 +20,13 @@ public class Buffer {
 	 * 
 	 * @param ms : mensaje que sera agregado al tope del buffer.
 	 */
-	public void almacenarMs (Mensaje ms) {
+	public boolean almacenarMs (Mensaje ms) {
 
-		if(buffer[top]==null){
-			buffer[top]=ms;					// agrega el mensaje en el tope del buffer.
-			top=(top+1)%buffer.length;		// actualiza el tope a la siguiente posicion.
-			ms.duerme();					// se duerme hasta que sea atendido.	
-		}
-		else
-			System.out.println("=================indice top sobre casilla ocupada================= MAAAL!! ==================================");
+			boolean almaceno = add(ms);
+			//System.out.println("  me duermo(ms) en top="+top+". con migo ya somos "+(++enEsperaMS));
+			if(almaceno)ms.duerme();					// se duerme hasta que sea atendido.
+			//System.out.println("  me despierto(ms). quedan solo "+(--enEsperaMS));
+			return almaceno;
 	}
 
 
@@ -42,6 +43,9 @@ public class Buffer {
 			primero=(primero+1)%buffer.length;
 			vC();							// termina la consulta. Norifica si hay clientes en cola.
 		}
+		else{
+			reajusteIndice();
+		}
 		
 		return ms;
 	}
@@ -49,7 +53,9 @@ public class Buffer {
 		cupo--;
 		if(cupo < 0)
 			try {
+				System.out.println("  me duermo. con migo ya somos "+(++enEspera));
 				wait();
+				System.out.println("  me despierto. quedan solo "+(--enEspera));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -66,12 +72,14 @@ public class Buffer {
 	 */
 	public synchronized void registrarSalida(String sCliente) {
 		totalClientes--;
-		System.out.println("Sale "+ sCliente + " quedan "+totalClientes+" clientes.		top: "+ top+ "primero: "+primero+imprimir());
+		System.out.println("  Sale "+ sCliente + " quedan "+totalClientes+" clientes.		top:  "+ top+ "primero: "+primero
+				+imprimir()		// imprime arreglo. 1 si hay algun mensaje 0 si no hay nada.
+				);
 
 	}
 
 	private String imprimir() {
-		String imp = "\n";
+		String imp = "\n                    ";
 		for (int i = 0; i < buffer.length; i++) {
 			imp+="| "+(buffer[i]==null?0:1)+" |";
 		}
@@ -86,11 +94,21 @@ public class Buffer {
 	}
 
 	public synchronized void reajusteIndice(){
-		System.out.println("ajustar indice necesario");
-		for (int i = 0; i < buffer.length+1; i++) {
+		//System.out.println("ajustar indice necesario");
+		for (int i = 0; i < buffer.length; i++) {
 			if(buffer[primero]==null)
 				primero=(primero+1)%buffer.length;
 		}
+	}
+	
+	public synchronized boolean add(Mensaje ms){
+		boolean listo = false;
+		if(buffer[primero]==null){
+			buffer[top]=ms;					// agrega el mensaje en el tope del buffer.
+			top=(top+1)%buffer.length;		// actualiza el tope a la siguiente posicion.
+			listo=true;
+		}
+		return listo;		
 	}
 
 }
