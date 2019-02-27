@@ -4,15 +4,17 @@ public class Servidor extends Thread {
 	private Buffer buffer;
 	private int id;
 	private Mensaje ms;
-	
-	public Servidor(Buffer b, int pid) {
+	private int t;
+
+	public Servidor(Buffer b, int pid, int seg) {
 		buffer=b;
 		id = pid;
+		t=seg;
 	}
-	
+
 	@Override
 	public void run() {
-		
+
 		while(hayClientes()) {
 			ms = buffer.retirar();	// retira el objeto en la posicion [primero] del buffer.
 			if(ms == null)
@@ -20,25 +22,27 @@ public class Servidor extends Thread {
 			else
 				responderMS(ms);	// si hay mensaje, lo responde (y despierta a su cliente).
 		}
-		
-		System.out.println("  sale servidor "+id);
 	}
-	
+
 	/**
 	 * 
 	 * @param ms no puede ser null.
 	 */
 	public void responderMS(Mensaje ms) {
 
+		trabajoFalso();
 		ms.actualizar(id);
-		try {
-			sleep((long)0);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		ms.despertar();
 	}
-	
+
+	private void trabajoFalso() {
+		try {
+			sleep((long)t*1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}	
+	}
+
 	public boolean hayClientes() {
 		return buffer.darTotalClientes() > 0;
 	}

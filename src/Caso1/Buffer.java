@@ -7,7 +7,7 @@ public class Buffer {
 	private int cupo; 	// se comportara como semaforo para clientes.
 	private int top = 0;		// clientes siempre agregan al indice top.
 	private int primero = 0;	// servidores siempre atienden al indice primero.
-	
+
 	private int enEspera = 0;
 	private int enEsperaMS = 0;
 
@@ -22,11 +22,9 @@ public class Buffer {
 	 */
 	public boolean almacenarMs (Mensaje ms) {
 
-			boolean almaceno = add(ms);
-			//System.out.println("  me duermo(ms) en top="+top+". con migo ya somos "+(++enEsperaMS));
-			if(almaceno)ms.duerme();					// se duerme hasta que sea atendido.
-			//System.out.println("  me despierto(ms). quedan solo "+(--enEsperaMS));
-			return almaceno;
+		boolean almaceno = add(ms);
+		if(almaceno)ms.duerme();		// se duerme hasta que sea atendido.
+		return almaceno;
 	}
 
 
@@ -40,22 +38,20 @@ public class Buffer {
 
 		if(ms != null) {
 			buffer[primero]=null;
+			vC();
 			primero=(primero+1)%buffer.length;
-			vC();							// termina la consulta. Norifica si hay clientes en cola.
 		}
 		else{
 			reajusteIndice();
 		}
-		
+
 		return ms;
 	}
 	public synchronized void pC() {
 		cupo--;
 		if(cupo < 0)
 			try {
-				System.out.println("  me duermo. con migo ya somos "+(++enEspera));
 				wait();
-				System.out.println("  me despierto. quedan solo "+(--enEspera));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -72,19 +68,9 @@ public class Buffer {
 	 */
 	public synchronized void registrarSalida(String sCliente) {
 		totalClientes--;
-		System.out.println("  Sale "+ sCliente + " quedan "+totalClientes+" clientes.		top:  "+ top+ "primero: "+primero
-				+imprimir()		// imprime arreglo. 1 si hay algun mensaje 0 si no hay nada.
-				);
-
+		System.out.println("  Sale "+ sCliente + " quedan "+totalClientes+" clientes.		top:  "+ top+ "primero: "+primero);
 	}
 
-	private String imprimir() {
-		String imp = "\n                    ";
-		for (int i = 0; i < buffer.length; i++) {
-			imp+="| "+(buffer[i]==null?0:1)+" |";
-		}
-		return imp;
-	}
 	/**
 	 * 
 	 * @return cantidad de clientes en ejecucion.
@@ -94,13 +80,13 @@ public class Buffer {
 	}
 
 	public synchronized void reajusteIndice(){
-		//System.out.println("ajustar indice necesario");
+		//System.out.println("  ajustar indice necesario");
 		for (int i = 0; i < buffer.length; i++) {
 			if(buffer[primero]==null)
 				primero=(primero+1)%buffer.length;
 		}
 	}
-	
+
 	public synchronized boolean add(Mensaje ms){
 		boolean listo = false;
 		if(buffer[primero]==null){
@@ -108,7 +94,16 @@ public class Buffer {
 			top=(top+1)%buffer.length;		// actualiza el tope a la siguiente posicion.
 			listo=true;
 		}
+
 		return listo;		
+	}
+
+	public synchronized void duerme(){
+		try {
+			wait();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
