@@ -21,7 +21,7 @@ public class Servidor extends Thread {
 				responderMS(ms);	// si hay mensaje, lo responde (y despierta a su cliente).
 		}
 		
-		
+		System.out.println("sale servidor "+sumando);
 	}
 	
 	/**

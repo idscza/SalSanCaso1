@@ -12,8 +12,11 @@ public class Cliente extends Thread{
 	@Override
 	public void run() {
 		
-		while( porEnviar > 0)
+		while( porEnviar > 0){
+			buffer.pC();
 			buffer.almacenarMs(new Mensaje("     Cliente: "+this.getName()+"   |    PorEnviar:"+porEnviar--));
+		}
+			
 		
 		buffer.registrarSalida(this.getName());
 	}

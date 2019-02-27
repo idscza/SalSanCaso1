@@ -5,11 +5,11 @@ public class Main {
 	public static void main(String[] args) {
 		
 		
-		int tamanioBuffer = 100;
-		int msPorCliente = 50;
+		int tamanioBuffer = 20;
+		int msPorCliente = 5;
 		
-		int cantidadClientes =200;
-		int cantidadServidores = 50;
+		int cantidadClientes =10;
+		int cantidadServidores = 5;
 		
 		Buffer buf = new Buffer(tamanioBuffer, cantidadClientes);
 		
