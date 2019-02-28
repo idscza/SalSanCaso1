@@ -1,0 +1,5 @@
+Buffer tamanio:2
+#Servidores:5
+delay del servidor(trabajo falso):0
+#Clientes:5
+peticionesXCliente:5
