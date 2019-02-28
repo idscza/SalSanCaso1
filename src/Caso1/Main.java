@@ -4,16 +4,24 @@ public class Main {
 
 	public static void main(String[] args) {
 
-//		int tamanioBuffer = 10;
-//		int msPorCliente = 10;
-//		int segundosXservidor = 1;
-//		int cantidadClientes =500;
-//		int cantidadServidores = 1000;
-		int tamanioBuffer = 3;
-		int msPorCliente = 50;
+		int tamanioBuffer = 0;
+		int msPorCliente = 0;
 		int segundosXservidor = 0;
-		int cantidadClientes =50;
-		int cantidadServidores = 50;
+		int cantidadClientes =0;
+		int cantidadServidores = 0;		
+		try {
+			BufferedReader in = new BufferedReader(new FileReader(new File("500.txt")));
+			tamanioBuffer = Integer.parseInt(in.readLine().split(":")[1]);
+			cantidadServidores = Integer.parseInt(in.readLine().split(":")[1]);
+			segundosXservidor = Integer.parseInt(in.readLine().split(":")[1]);
+			cantidadClientes = Integer.parseInt(in.readLine().split(":")[1]);
+			msPorCliente = Integer.parseInt(in.readLine().split(":")[1]);
+			System.out.println("|"+tamanioBuffer+"|"+cantidadServidores+"|"+segundosXservidor+"|"+cantidadClientes+"|"+msPorCliente);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		Buffer buf = new Buffer(tamanioBuffer, cantidadClientes);
 
